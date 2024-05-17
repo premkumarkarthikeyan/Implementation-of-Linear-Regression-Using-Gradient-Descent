@@ -1,6 +1,5 @@
 # Implementation-of-Linear-Regression-Using-Gradient-Descent->
-
-## AIM :
+## Aim 
 To write a program to predict the profit of a city using the linear regression model with gradient descent.
 
 ## Equipments Required :
@@ -8,134 +7,82 @@ To write a program to predict the profit of a city using the linear regression m
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm :
-1.Start the program.
-
-2.Import numpy as np.
-
-3.Give the header to the data.
-
-4.Find the profit of population.
-
-5.Plot the required graph for both for Gradient Descent Graph and Prediction Graph.
-
-6.End the program.
+1. Initialize weights randomly.
+2. Compute predicted values.
+3. Compute gradient of loss function.
+4. Update weights using gradient descent.
 
 ## Program :
 ```
-/*
 Program to implement the linear regression using gradient descent.
-Developed by: Prem kumar k
-RegisterNumber:  212222230111
-*/
+Developed by : Prem kumar k
+RegisterNumber :  212222230111
+```
 
+```
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
-data=pd.read_csv("/content/ex1.txt" , header=None )
+def linear_regression(X1,y,learning_rate = 0.1, num_iters = 1000):
+    X = np.c_[np.ones(len(X1)),X1]
+    
+    theta = np.zeros(X.shape[1]).reshape(-1,1)
+    
+    for _ in range(num_iters):
+        
+        #calculate predictions
+        predictions = (X).dot(theta).reshape(-1,1)
+        
+        #calculate errors
+        errors=(predictions - y ).reshape(-1,1)
+        
+        #update theta using gradiant descent
+        theta -= learning_rate*(1/len(X1))*X.T.dot(errors)
+    return theta
+                                        
+data=pd.read_csv("C:/classes/ML/50_Startups.csv")
+data.head()
 
-plt.scatter(data[0],data[1])
-plt.xticks(np.arange(5,30,step =5))
-plt.yticks(np.arange(-5,30,step=5))
-plt.xlabel("Population of city (10.000s)")
-plt.ylabel("Profit ($10,000)")
-plt.title("Profit Prediction")
+#assuming the lost column is your target variable 'y' 
 
+X = (data.iloc[1:,:-2].values)
+X1=X.astype(float)
 
-def computeCost(X,y,theta):
-  """
-  Take in a numpy array X,Y,THETA and generate the cost function using the    in a linear regression model
+scaler = StandardScaler()
+y=(data.iloc[1:,-1].values).reshape(-1,1)
+X1_Scaled = scaler.fit_transform(X1)
+Y1_Scaled = scaler.fit_transform(y)
+print(X)
+print(X1_Scaled)
 
-  """
-  m=len(y)
-  h=X.dot(theta)
-  square_err=(h-y)**2
+#learn modwl paramerers
 
-  return 1/(2*m)*np.sum(square_err)
+theta=linear_regression(X1_Scaled,Y1_Scaled)
 
-
-data_n=data.values
-m=data_n[:,0].size
-X=np.append(np.ones((m,1)),data_n[:,0].reshape(m,1),axis=1)
-y=data_n[:,1].reshape(m,1)
-theta=np.zeros((2,1))
-
-computeCost(X,y,theta)
-
-def gradientDescent(X,y,theta,alpha,num_iters):
-  m=len(y)
-  J_history=[]
-  for i in range(num_iters):
-    predictions=X.dot(theta)
-    error=np.dot(X.transpose(),(predictions -y))
-    descent=alpha*1/m*error
-    theta-=descent
-    J_history.append(computeCost(X,y,theta))
-  return theta,J_history
-
-theta,J_history = gradientDescent(X,y,theta,0.01,1500)
-print("h(x)="+str(round(theta[0,0],2))+"+"+str(round(theta[1,0],2))+"x1")
-
-plt.plot(J_history)
-plt.xlabel("Iterations")
-plt.ylabel("$J(\Theta)$")
-plt.title("Cost Function Of Gradient Descent")
-
-plt.scatter(data[0],data[1])
-x_value=[x for x in range(25)]
-y_value=[y*theta[1]+theta[0] for y in x_value]
-plt.plot(x_value,y_value,color="green")
-plt.xticks(np.arange(5,30,step =5))
-plt.yticks(np.arange(-5,30,step=5))
-plt.xlabel("Population of city (10.000s)")
-plt.ylabel("Profit ($10,000)")
-plt.title("Profit Prediction")
-
-def predict(x,theta):
-  predictions=np.dot(theta.transpose(),x)
-  return predictions[0]
-
-predict1=predict(np.array([1,3.5]),theta)*10000
-print("For Population = 35,000, we predict a profit of $"+str(round(predict1,0)))
-
-predict2=predict(np.array([1,7]),theta)*10000
-print("For Population = 70,000, we predict a profit of $"+str(round(predict2,0)))
-
+#predict target value for a new data
+new_data=np.array([165349.2,136897.8,471784.1]).reshape(-1,1)
+new_Scaled=scaler.fit_transform(new_data)
+prediction=np.dot(np.append(1,new_Scaled),theta)
+prediction=prediction.reshape(-1,1)
+pre=scaler.inverse_transform(prediction)
+print(prediction)
+print(f"Predicted value: {pre}")
 
 ```
 
-
 ## Output:
+### data head()
+![309978774-13bc974b-a702-46d8-875d-923f9e27129a](https://github.com/Pradeeppachiyappan/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/118707347/c1bab2e4-4db2-4141-bd47-e57e503e90b5)
 
-### PROFIT PREDICTION GRAPH:
+### value of X:
+![309978933-2d2fdcd5-406c-4f5e-90c0-920c4e9afa0f](https://github.com/Pradeeppachiyappan/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/118707347/1f9faf92-a6e9-4d6a-8fe1-4e4a0601443e)
 
-![image](https://github.com/Pradeeppachiyappan/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/118707347/ab51c031-e56a-4f7c-ac1c-d1d4138c9131)
+### value of X1_Scaled:
+![309979138-4743c849-ac35-42d2-b944-de07bae9474e](https://github.com/Pradeeppachiyappan/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/118707347/00814505-cc16-4aa5-a72b-a97370d13185)
 
-### COMPUTE COST VALUE:
-
-![image](https://github.com/Pradeeppachiyappan/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/118707347/b7ed77b6-4b6e-4d81-b1c9-a64581967244)
-
-### h(x) VALUE:
-
-![image](https://github.com/Pradeeppachiyappan/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/118707347/ee900b69-d3e5-4aab-bc77-8c622eff4ce9)
-
-### COST FUNCTION USING GRADIENT DESCENT GRAPH:
-
-![image](https://github.com/Pradeeppachiyappan/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/118707347/2e05ee2c-c460-4665-a845-2dbad8eca97d)
-
-
-### PROFIT PREDICTION GRAPH:
-
-![image](https://github.com/Pradeeppachiyappan/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/118707347/e6c39a22-c750-4ef5-b861-cf56050cd2c5)
-
-### PROFIT FOT THE POPULATION 35,000:
-
-![image](https://github.com/Pradeeppachiyappan/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/118707347/f0faf99d-a3cc-4275-b123-481bbc0bcae5)
-
-### PROFIT FOR THE POPULATION 70,000:
-
-![image](https://github.com/Pradeeppachiyappan/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/118707347/87c341c5-ae1d-44f4-b8c7-65bbdc255a3c)
-
+### predicted value:
+![309979214-39fd799a-7a2c-4e79-bc3b-00528b4d4a9f](https://github.com/Pradeeppachiyappan/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/118707347/a38f70ea-289e-4745-acd9-824d0c370784)
 
 ## Result:
 Thus the program to implement the linear regression using gradient descent is written and verified using python programming.
